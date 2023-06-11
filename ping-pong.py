@@ -57,20 +57,47 @@ racket1 = Player(racket_img, 30, 200, 4, 50, 150)
 racket2 = Player(racket_img, 520, 200, 4, 50, 150)
 ball = GameSprite(ball_img, 200, 200, 4, 50, 50)
 
+#Text lose and lose
+font.init()
+myFont = font.Font(None, 35)
+lose1 = myFont.render('PLAYER 1 LOSE', True, (180, 0, 0))
+lose2 = myFont.render('PLAYER 2 LOSE', True, (180, 0, 0))
 
-
+speed_x = 3
+speed_y = 3
+finish = False
 while game:
 
     for e in event.get():
         if e.type == pygame.QUIT:
             game = False
-    window.fill(back)
-    racket1.update_l()
-    racket2.update_r()
+    if finish != True:
+        window.fill(back)
+        racket1.update_l()
+        racket2.update_r()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
 
-    racket1.reset()
-    racket2.reset()
-    ball.reset()
+        if sprite.collide_rect(racket1, ball) or sprite.collide_rect(racket2, ball):
+            speed_x *= -1
+
+        if ball.rect.y > win_height - 50 or ball.rect.y < 0:
+            speed_y *= -1
+
+        if ball.rect.x < 0:
+            window.blit(lose1, (200, 100))
+            finish = True
+            game = False
+
+        if ball.rect.x > 550:
+            window.blit(lose2, (200, 100))
+            finish = True
+            game = False
+
+
+        racket1.reset()
+        racket2.reset()
+        ball.reset()
 
     display.update()
     clock.tick(60)
